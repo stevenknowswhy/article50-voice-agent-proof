@@ -5,6 +5,8 @@ ROOT = Path(__file__).parents[1]
 SOURCE = (ROOT / "src" / "agent.py").read_text()
 README = (ROOT / "README.md").read_text()
 VAPI = json.loads((ROOT / "vapi-assistant.example.json").read_text())
+DEMO_TRANSCRIPT_PATH = ROOT / "docs" / "fictional-call-demo.md"
+DEMO_AUDIO_PATH = ROOT / "docs" / "fictional-call-demo.mp3"
 
 
 def test_livekit_agent_discloses_ai_identity_and_offer_boundary() -> None:
@@ -69,3 +71,26 @@ def test_public_tree_contains_no_live_telephony_or_checkout_values() -> None:
     assert "api_key" not in combined.lower()
     assert "buy.stripe.com" not in combined
     assert "No live telephony resource is created" in README
+
+
+def test_fictional_audio_demo_is_labeled_and_data_minimized() -> None:
+    transcript = DEMO_TRANSCRIPT_PATH.read_text()
+
+    assert "Fictional local audio rendering" in transcript
+    assert "not a recording of a phone call" in transcript
+    assert "No contact details were captured" in transcript
+    assert "We did not make a live phone call" in transcript
+    assert "AI voice agent for Forhemit Labs" in transcript
+    assert "I don't provide legal advice" in transcript
+    assert "May I collect business details for a human follow-up?" in transcript
+    assert "Please don't share credentials or source code" in transcript
+    assert "buy.stripe.com" not in transcript
+    assert "destination_number" not in transcript
+    assert "docs/fictional-call-demo.mp3" in README
+
+
+def test_fictional_audio_demo_is_a_nonempty_mp3() -> None:
+    payload = DEMO_AUDIO_PATH.read_bytes()
+
+    assert len(payload) > 10_000
+    assert payload.startswith(b"ID3") or payload[:2] in {b"\xff\xfb", b"\xff\xf3", b"\xff\xf2"}

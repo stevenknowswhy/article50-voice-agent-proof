@@ -20,6 +20,12 @@ A secrets-free reference implementation for an inbound AI voice qualification ag
 
 These files contain no phone number, API key, provider account identifier, destination number, or checkout URL. No live telephony resource is created by this repository.
 
+## Listen to the fictional call flow
+
+[Play or download the MP3](docs/fictional-call-demo.mp3) and read the [exact transcript](docs/fictional-call-demo.md).
+
+This is a local text-to-speech rendering of a fictional qualification exchange, not a recording of a phone call. It demonstrates AI identity disclosure, the implementation-only boundary, consent before business-detail capture, bounded surface questions, sensitive-data suppression, and human review. It used no phone number, carrier, caller, lead, or live telephony.
+
 ## Simulate the lifecycle
 
 Run an inbound call that declines recording consent:
