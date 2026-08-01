@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "forhemit-article50-voice-agent-proof"
+version = "1.0.0"
+description = "Secrets-free inbound AI voice qualification reference"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11, <3.15"
+dependencies = [
+  "livekit-agents>=1.6.1,<2",
+  "python-dotenv>=1,<2",
+]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12,<1"]
+
+[tool.setuptools]
+py-modules = ["agent"]
+
+[tool.setuptools.package-dir]
+"" = "src"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "RUF"]
+ignore = ["E501"]
