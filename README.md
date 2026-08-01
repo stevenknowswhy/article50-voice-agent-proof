@@ -12,12 +12,38 @@ A secrets-free reference implementation for an inbound AI voice qualification ag
 - Stops persuasion when a caller opts out or says they are not interested.
 - Logs only that a consented capture occurred and the number of fields; the reference code does not log raw lead details.
 
-## Two adapters
+## Provider adapters and local simulation
 
 - `src/agent.py` is a LiveKit Agents reference implementation for an inbound RTC session.
 - `vapi-assistant.example.json` is a provider-neutralized Vapi assistant definition with the same conversation boundaries.
+- `src/call_simulator.py` is a deterministic, standard-library simulator for inbound and permission-gated outbound call lifecycles.
 
-Neither adapter contains a phone number, API key, provider account identifier, destination number, or checkout URL. No live telephony resource is created by this repository.
+These files contain no phone number, API key, provider account identifier, destination number, or checkout URL. No live telephony resource is created by this repository.
+
+## Simulate the lifecycle
+
+Run an inbound call that declines recording consent:
+
+```bash
+PYTHONPATH=src python -m call_simulator inbound --recording-consent no
+```
+
+Prove that an outbound call fails closed without prior contact permission:
+
+```bash
+PYTHONPATH=src python -m call_simulator outbound
+```
+
+Simulate a permitted outbound call with a data-minimized three-field capture:
+
+```bash
+PYTHONPATH=src python -m call_simulator outbound \
+  --prior-contact-permission yes \
+  --recording-consent yes \
+  --supplied-field-count 3
+```
+
+The JSON output contains only lifecycle state, booleans, and a field count. It accepts no raw contact values, persists nothing, and explicitly reports `live_telephony_created: false`.
 
 ## Verify locally
 
@@ -26,7 +52,7 @@ python -m pytest -q
 python -m ruff check .
 ```
 
-The tests are deliberately static: they verify that the disclosure, consent, legal, sensitive-data, checkout, and logging boundaries remain present even when provider credentials are unavailable.
+The adapter tests statically verify disclosure, consent, legal, sensitive-data, checkout, and logging boundaries. The simulator tests execute inbound disclosure, outbound permission, opt-out, and data-minimization behavior without provider credentials.
 
 ## Deployment boundary
 
